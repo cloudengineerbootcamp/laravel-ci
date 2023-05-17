@@ -1,17 +1,18 @@
-
-// Code related to docker block
-
-stage ('Docker build') {
-    steps {
-        script{
-            sh 'cp -r ../web-app@2/target .'
-            sh 'docker build . -t sudarshantevari/web-app:$BUILD_NUMBER'
-            withCredentials([string(credentialsId: 'docker-hub', variable: 'docker-hub')]) {
-                sh '''
-                docker login -u sudarshantevari -p $docker_password
-                docker push sudarshantevari/web-app:$BUILD_NUMBER
-                '''
-            } 
+pipeline {
+    agent any
+    stages {
+        stage ('Docker image build and push to docker hub') {
+            steps {
+                script{
+                    sh 'docker build . -t franckabdullah/laravel10:$BUILD_NUMBER'
+                    withCredentials([string(credentialsId: 'docker-hub', variable: 'docker-hub-cred')]) {
+                        sh '''
+                        docker login -u franckabdullah -p $docker-hub-cred
+                        docker push franckabdullah/laravel10:$BUILD_NUMBER
+                        '''
+                    } 
+                }
+            }
         }
     }
 }
