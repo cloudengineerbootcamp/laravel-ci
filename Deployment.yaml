@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: laravel10
+  name: laravel10
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: laravel10
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: laravel10
+    spec:
+      containers:
+      - image: docker.io/franckabdullah/laravel10:docker_tag
+        name: laravel10
+        resources:
+          requests:
+            memory: "60Mi"
+            cpu: "1m"
+          limits:
+            memory: "128Mi"
+            cpu: "2m"
+      - image: nginx:stable-alpine3.17-slim
+        name: nginx-laravel10
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d
+          name: nginx-config
+        resources:
+          requests:
+            memory: "60Mi"
+            cpu: "1m"
+          limits:
+            memory: "128Mi"
+            cpu: "2m"
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-config
+          items:
+          - key: conf
+            path: default.conf
+status: {}
